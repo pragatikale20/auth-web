@@ -6,9 +6,9 @@ export default function Header() {
     <div className='bg-slate-200'>
       <div className='flex justify-between items-center mx-auto'>
        <Link to='/'>
-       <h1 className='font-bold'>Auth App</h1>
+       <h1 className='font-bold p-2'>Auth App</h1>
          </Link>
-     <ul className='flex gap-4'>
+     <ul className='flex gap-4 font-semibold'>
         <li>Home</li>
         <Link to='/about'>
         <li>About</li>
