@@ -8,7 +8,7 @@ export const signup = async (req, res, next) => {
   if (!username || !email || !password) {
     return res.status(400).json({ message: 'All fields are required' });
   }
-
+  
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -38,7 +38,7 @@ export const signin = async (req, res, next) => {
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) return next(errorHandler(401, 'Invalid credentials'));
 
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, {
+    const token = JWT.sign({ id: validUser._id }, process.env.JWT_SECRET, {
       expiresIn: '1h'  // Set expiration for better security
     });
 
