@@ -63,7 +63,7 @@ export default function SignUp() {
           onChange={handleChange}
           ></input>
         <button disabled={loading} className="bg-slate-800 text-white
-        rounded-lg uppercase hover:opacity-80 h-8">
+        rounded-lg uppercase hover:opacity-80 h-11">
           {loading ? 'Loading...' : 'Sign Up'}
           </button>
       </form>
