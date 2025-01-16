@@ -39,20 +39,20 @@ export const signin = async (req, res, next) => {
     if (!validPassword) return next(errorHandler(401, 'Invalid credentials'));
 
     const token = JWT.sign({ id: validUser._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h'  // Set expiration for better security
+      expiresIn: '1h' 
     });
 
-    // Extracting password before sending user data in response
+    
     const { password: hashedPassword, ...userWithoutPassword } = validUser._doc;
 
     res
       .cookie('access_token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production
-        expires: new Date(Date.now() + 3600000)  // 1 hour cookie expiry
+        secure: process.env.NODE_ENV === 'production', 
+        expires: new Date(Date.now() + 3600000)
       })
       .status(200)
-      .json(userWithoutPassword);  // Send user data excluding password
+      .json(userWithoutPassword); 
   } catch (error) {
     next(error);
   }

@@ -6,12 +6,12 @@ import {
   signInFailure,
 } from '../redux/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-//import jwt from 'jsonwebtoken';
 
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleChange = (e) => {
@@ -29,13 +29,9 @@ export default function SignIn() {
         },
         body: JSON.stringify(formData),
       });
-      
       const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message); 
-      }
       if (data.success === false) {
-        dispatch(signInFailure(data));
+        dispatch(signInFailure(data.message));
         return;
       }
       dispatch(signInSuccess(data));
@@ -68,6 +64,7 @@ export default function SignIn() {
         >
           {loading ? 'Loading...' : 'Sign In'}
         </button>
+        
       </form>
       <div className='flex gap-2 mt-5'>
         <p>Dont Have an account?</p>
