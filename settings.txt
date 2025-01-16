@@ -1,0 +1,4 @@
+root: C:\Users\praga\OneDrive\Desktop\mern-auth
+path: C:\Program Files\nodejs
+node_version=20.18.1
+
