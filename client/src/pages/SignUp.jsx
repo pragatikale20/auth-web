@@ -80,7 +80,7 @@ export default function SignIn() {
         </Link>
       </div>
       <p className='text-red-700 mt-5'>
-        {error ? error || 'Something went wrong!' : ''}
+        {error ? error.message || 'Something went wrong!' : ''}
       </p>
     </div>
   );

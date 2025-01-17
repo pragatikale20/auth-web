@@ -36,9 +36,9 @@ export default function OAuth() {
   return (
     <button
       className="bg-red-700 text-white rounded-lg p-3 uppercase hover:opacity-95"
-      onClick={handleGoogleClick}  // Corrected function reference
+      onClick={handleGoogleClick}  
     >
-      Sign in with Google
+      Continue with Google
     </button>
   );
 }
