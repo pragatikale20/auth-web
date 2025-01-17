@@ -6,7 +6,7 @@ import {
   signInFailure,
 } from '../redux/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-
+import OAuth from '../components/OAuth';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
@@ -70,6 +70,7 @@ export default function SignIn() {
         >
           {loading ? 'Loading...' : 'Sign Up'}
         </button>
+        <OAuth />
         
       </form>
       <div className='flex gap-2 mt-5'>
@@ -79,7 +80,7 @@ export default function SignIn() {
         </Link>
       </div>
       <p className='text-red-700 mt-5'>
-        {error ? error || 'Something went wrong!' : ''}
+        {error ? error.message || 'Something went wrong!' : ''}
       </p>
     </div>
   );
