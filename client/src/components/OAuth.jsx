@@ -1,42 +1,51 @@
-import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
-import { app } from "../firebase";
-import { useDispatch } from "react-redux";
-import { signInSuccess } from "../redux/user/userSlice";
-import { useNavigate } from "react-router-dom";
+import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
+import { app } from '../firebase';
+import { useDispatch } from 'react-redux';
+import { signInSuccess } from '../redux/user/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function OAuth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  const handleGoogleClick = async (e) => {
+    e.preventDefault();
 
-  const handleGoogleClick = async () => {
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' }); // Prompt for account selection
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
 
-      const res = await fetch("/api/auth/google", {
-        method: "POST",
+      // Retrieve the ID token
+      const idToken = await result.user.getIdToken();
+
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
+          token: idToken, // Include the ID token in the request
           name: result.user.displayName,
           email: result.user.email,
           photo: result.user.photoURL,
         }),
       });
       const data = await res.json();
+      console.log(data);
       dispatch(signInSuccess(data));
-
+      navigate('/');
     } catch (error) {
-      console.log("Could not login with Google", error);
+      console.log('Could not login with Google', error);
     }
   };
 
   return (
     <button
-      className="bg-red-700 text-white rounded-lg p-3 uppercase hover:opacity-95"
-      onClick={handleGoogleClick}  
+      type='button'
+      onClick={handleGoogleClick}
+      className='bg-red-900 text-white rounded-lg p-3 uppercase hover:opacity-95 w-full'
     >
       Continue with Google
     </button>
