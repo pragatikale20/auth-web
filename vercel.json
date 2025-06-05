@@ -2,9 +2,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite" , 
+
   "builds": [
     {
-      "src": "client/package.json",
+      "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist"
@@ -13,8 +14,7 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/client/dist/index.html"
+      "src": "/(.*)", "dest": "/index.html"
     }
   ]
 }
