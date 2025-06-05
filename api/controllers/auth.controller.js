@@ -1,9 +1,7 @@
 import User from '../models/user.model.js'; // Import the User model
 import bcrypt from 'bcryptjs'; // Import bcryptjs for password hashing
 import jwt from 'jsonwebtoken'; // Import jwt for token generation
-import { OAuth2Client } from 'google-auth-library'; // Import Google Auth Library
-import nodemailer from 'nodemailer'; // Import Nodemailer for sending emails
-
+import { OAuth2Client } from 'google-auth-library';
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID); // Initialize Google Auth client
 
 // Google Auth controller
@@ -83,6 +81,6 @@ export const signup = async (req, res) => {
         res.status(200).json({ success: true, message: 'User registered successfully.' }); // Return success response
     } catch (error) {
         console.error('Error during signup:', error.message); // Log the error message
-        res.status(500).json({ success: false, message: 'Server error.', error: error.message || 'An unexpected error occurred.' }); // Include error message in response
+        res.status(404).json({ success: true, message: 'Server error.', error: error.message || 'An unexpected error occurred.' }); // Include error message in response
     }
 };

@@ -13,11 +13,11 @@ export default function OAuth() {
 
     try {
       const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' }); // Prompt for account selection
+      provider.setCustomParameters({ prompt: 'select_account' }); 
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
 
-      // Retrieve the ID token
+
       const idToken = await result.user.getIdToken();
 
       const res = await fetch('/api/auth/google', {
@@ -26,7 +26,7 @@ export default function OAuth() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          token: idToken, // Include the ID token in the request
+          token: idToken, 
           name: result.user.displayName,
           email: result.user.email,
           photo: result.user.photoURL,
