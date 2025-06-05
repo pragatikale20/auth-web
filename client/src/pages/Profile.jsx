@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
-import { useRef, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import {
   getDownloadURL,
   getStorage,
@@ -7,7 +7,6 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { app } from '../firebase';
-import { useDispatch } from 'react-redux';
 import {
   updateUserStart,
   updateUserSuccess,
@@ -29,6 +28,11 @@ export default function Profile() {
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const { currentUser, loading, error } = useSelector((state) => state.user);
+
+  // Particle init handler
+  const particlesInit = useCallback(async (engine) => {
+    await loadFull(engine);
+  }, []);
 
   useEffect(() => {
     if (image) {
@@ -65,13 +69,13 @@ export default function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/update/${currentUser._id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (data.success === false) {
+      if (!res.ok || data.success === false) {
         dispatch(updateUserFailure(data));
         return;
       }
@@ -85,11 +89,11 @@ export default function Profile() {
   const handleDeleteAccount = async () => {
     try {
       dispatch(deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: "DELETE",
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/delete/${currentUser._id}`, {
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${currentUser.token}`,  // Ensure you send the token
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`,
         },
       });
       const data = await res.json();
@@ -102,7 +106,7 @@ export default function Profile() {
       dispatch(deleteUserFailure(error));
     }
   };
-  
+
   const handleSignOut = async () => {
     try {
       await fetch('/api/auth/signout');
@@ -117,18 +121,18 @@ export default function Profile() {
       {/* Particle Background */}
       <Particles
         id="tsparticles"
-        init={loadFull}
+        init={particlesInit}
         options={{
           particles: {
             number: { value: 100 },
             size: { value: 3 },
-            move: { speed: 1.5, direction: "none", random: true },
+            move: { speed: 1.5, direction: 'none', random: true },
             opacity: { value: 0.7 },
-            shape: { type: "circle" },
-            color: { value: "#00d9ff" },
+            shape: { type: 'circle' },
+            color: { value: '#00d9ff' },
           },
           interactivity: {
-            events: { onHover: { enable: true, mode: "repulse" } },
+            events: { onHover: { enable: true, mode: 'repulse' } },
           },
         }}
         className="absolute top-0 left-0 w-full h-full z-0"
@@ -145,41 +149,75 @@ export default function Profile() {
             accept="image/*"
             onChange={(e) => setImage(e.target.files[0])}
           />
-          
+
           <img
             src={formData.profilePicture || currentUser.profilePicture}
             alt="profile"
             className="h-24 w-24 self-center cursor-pointer rounded-full object-cover border-4 shadow-lg hover:scale-110 transition-transform"
             onClick={() => fileRef.current.click()}
           />
-         <p className="text-sm self-center">
-  {imageError ? (
-    <span className="text-red-700">Error uploading image (file size must be &lt; 2MB)</span>
-  ) : imagePercent > 0 && imagePercent < 100 ? (
-    <span className="text-slate-700">{`Uploading: ${imagePercent} %`}</span>
-  ) : imagePercent === 100 ? (
-    <span className="text-green-700">Image uploaded successfully</span>
-  ) : ('')}
-</p>
 
-          <input defaultValue={currentUser.username} type="text" id="username" placeholder="Username" className="bg-gray-800 text-white rounded-lg p-3" onChange={handleChange} />
-          <input defaultValue={currentUser.email} type="email" id="email" placeholder="Email" className="bg-gray-800 text-white rounded-lg p-3" onChange={handleChange} />
-          <input type="password" id="password" placeholder="Password" className="bg-gray-800 text-white rounded-lg p-3" onChange={handleChange} />
+          <p className="text-sm self-center">
+            {imageError ? (
+              <span className="text-red-700">Error uploading image (file size must be &lt; 2MB)</span>
+            ) : imagePercent > 0 && imagePercent < 100 ? (
+              <span className="text-slate-400">{`Uploading: ${imagePercent}%`}</span>
+            ) : imagePercent === 100 ? (
+              <span className="text-green-500">Image uploaded successfully</span>
+            ) : (
+              ''
+            )}
+          </p>
 
-          {/* Update Button with Hover Effect */}
-          <button className="bg-[#00d9ff] text-black p-3 rounded-lg uppercase font-bold hover:scale-105 transition-transform hover:shadow-[#00d9ff] hover:text-white">
+          <input
+            defaultValue={currentUser.username}
+            type="text"
+            id="username"
+            placeholder="Username"
+            className="bg-gray-800 text-white rounded-lg p-3"
+            onChange={handleChange}
+          />
+          <input
+            defaultValue={currentUser.email}
+            type="email"
+            id="email"
+            placeholder="Email"
+            className="bg-gray-800 text-white rounded-lg p-3"
+            onChange={handleChange}
+          />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            className="bg-gray-800 text-white rounded-lg p-3"
+            onChange={handleChange}
+          />
+
+          <button
+            type="submit"
+            className="bg-[#00d9ff] text-black p-3 rounded-lg uppercase font-bold hover:scale-105 transition-transform hover:shadow-[#00d9ff] hover:text-white"
+          >
             {loading ? 'Loading...' : 'Update'}
           </button>
         </form>
 
         <div className="flex justify-between mt-5">
-          <span onClick={handleDeleteAccount} className="text-red-400 cursor-pointer hover:text-red-500 hover:scale-105 transition-transform">Delete Account</span>
-          <span onClick={handleSignOut} className="text-red-400 cursor-pointer hover:text-red-500 hover:scale-105 transition-transform">Sign Out</span>
+          <span
+            onClick={handleDeleteAccount}
+            className="text-red-400 cursor-pointer hover:text-red-500 hover:scale-105 transition-transform"
+          >
+            Delete Account
+          </span>
+          <span
+            onClick={handleSignOut}
+            className="text-red-400 cursor-pointer hover:text-red-500 hover:scale-105 transition-transform"
+          >
+            Sign Out
+          </span>
         </div>
-       
 
         {error && <p className="text-red-700 mt-5">Something went wrong!</p>}
-        {updateSuccess && <p className="text-green-700 mt-5">User updated successfully!</p>}
+        {updateSuccess && <p className="text-green-500 mt-5">User updated successfully!</p>}
       </div>
     </div>
   );
