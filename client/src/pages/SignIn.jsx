@@ -44,8 +44,8 @@ export default function SignIn() {
         return;
       }
 
-      dispatch(signInSuccess(data));
-      navigate('/');
+     dispatch(signInSuccess(data));
+navigate('/profile');
     } catch (err) {
       dispatch(signInFailure(err.message || 'Something went wrong'));
     }
